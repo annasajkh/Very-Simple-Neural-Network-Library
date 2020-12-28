@@ -27,7 +27,6 @@ public class NeuralNetwork
 
     public NeuralNetwork(int inputSize, int hiddenLayerSize, int outputSize)
     {
-        //init
         this(inputSize, hiddenLayerSize, outputSize, 1);
     }
 
@@ -171,7 +170,7 @@ public class NeuralNetwork
 
     private Matrix[] getAllErrors(Matrix error)
     {
-	//make array of matrix and set last index = error
+        //make array of matrix and set last index = error
         Matrix[] errors = new Matrix[weights.length];
         errors[errors.length - 1] = error;
 
@@ -192,18 +191,18 @@ public class NeuralNetwork
         Matrix gradient = new Matrix(Arrays.stream(layer)
                                            .map(NeuralNetwork::dsigmoid)
                                            .toArray());
-	
-	//multiply it by errors and learning rate
+
+        //multiply it by errors and learning rate
         gradient.scale(errors);
         gradient.scale(learningRate);
 
         //deltaWeight = gradient multiply afterLayer transposted
         Matrix deltaWeight = Matrix.multiply(gradient, Matrix.transpose(new Matrix(afterLayer)));
 
-        //adjust the weights by deltaWeight
+        //adjust the weight by deltaWeight
         weights[index].add(deltaWeight);
 
-        //adjust the biases by it's delta (it's just gradient)
+        //adjust the bias by it's delta (it's just the gradient)
         biases[index].add(gradient);
 
     }
@@ -234,17 +233,73 @@ public class NeuralNetwork
             return;
         }
 
+        //checking if input length is greater than input size
+        if (expectedOutput.length > inputSize)
+        {
+            System.out.println("Error input is bigger than the input size");
+            return;
+        }
+
         this.expectedOutput = expectedOutput;
 
         //pass input to input layer
         network[0] = input;
-	
-	//feedforward
+
+        //feedforward
         for (int i = 1; i < network.length; i++)
         {
             preprocess(i, true);
         }
 
+    }
+
+    //mutate weights by chance between 0 - 1
+    public NeuralNetwork mutateWeights(double chance)
+    {
+        NeuralNetwork neuralNetwork = clone();
+        if (Math.random() > chance)
+        {
+            return neuralNetwork;
+        }
+        for (int i = 0; i < neuralNetwork.weights.length; i++)
+        {
+            neuralNetwork.weights[i].mutate();
+        }
+        return neuralNetwork;
+    }
+
+    //mutate biases by chance between 0 - 1
+    public NeuralNetwork mutateBiases(double chance)
+    {
+        NeuralNetwork neuralNetwork = clone();
+        if (Math.random() > chance)
+        {
+            return neuralNetwork;
+        }
+        for (int i = 0; i < neuralNetwork.biases.length; i++)
+        {
+            neuralNetwork.biases[i].mutate();
+        }
+        return neuralNetwork;
+    }
+
+    //mutates weights and biases by chance between 0 - 1
+    public NeuralNetwork mutate(double chance)
+    {
+        NeuralNetwork neuralNetwork = clone();
+        if (Math.random() > chance)
+        {
+            return neuralNetwork;
+        }
+        for (int i = 0; i < neuralNetwork.weights.length; i++)
+        {
+            neuralNetwork.weights[i].mutate();
+        }
+        for (int i = 0; i < neuralNetwork.biases.length; i++)
+        {
+            neuralNetwork.biases[i].mutate();
+        }
+        return neuralNetwork;
     }
 
     public NeuralNetwork clone()

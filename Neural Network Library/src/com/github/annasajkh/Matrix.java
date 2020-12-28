@@ -71,6 +71,17 @@ public class Matrix
         }
     }
 
+    public void mutate()
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                array[i][j] += Math.random() * 2 - 1;
+            }
+        }
+    }
+
     public double[] toArray()
     {
         double[] result = new double[rows * cols];
