@@ -7,4 +7,4 @@ the example are in Main class
 
 there is 2 versions one is using custom Matrix Library the other one using
 jblas the one using jblas is very fast it can do 1.000.000 training in a ~2 seconds
-omg 
+omg it so fast cuz it uses native code to do matrix calculation
