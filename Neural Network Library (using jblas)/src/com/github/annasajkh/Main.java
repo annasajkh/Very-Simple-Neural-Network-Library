@@ -9,6 +9,7 @@ public class Main
     public static void main(String[] args)
     {
 
+
         NeuralNetwork neuralNetwork = new NeuralNetwork(2, 5, 1, 2);
         neuralNetwork.setLearningRate(0.01);
         Random random = new Random();

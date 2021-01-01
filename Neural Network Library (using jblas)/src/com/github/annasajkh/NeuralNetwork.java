@@ -254,7 +254,7 @@ public class NeuralNetwork
                 {
                     if (Math.random() <= chance)
                     {
-                        weight[j][k] = chance;
+                        weight[j][k] += Math.random() * 2 - 1;
                     }
                 }
             }
@@ -278,7 +278,7 @@ public class NeuralNetwork
                 {
                     if (Math.random() <= chance)
                     {
-                        bias[j][k] = chance;
+                        bias[j][k] += Math.random() * 2 - 1;
                     }
                 }
             }
@@ -302,7 +302,7 @@ public class NeuralNetwork
                 {
                     if (Math.random() <= chance)
                     {
-                        weight[j][k] = chance;
+                        weight[j][k] += Math.random() * 2 - 1;
                     }
                 }
             }
@@ -320,7 +320,7 @@ public class NeuralNetwork
                 {
                     if (Math.random() <= chance)
                     {
-                        bias[j][k] = chance;
+                        bias[j][k] += Math.random() * 2 - 1;
                     }
                 }
             }
