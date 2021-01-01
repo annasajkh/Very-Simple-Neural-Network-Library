@@ -240,24 +240,26 @@ public class NeuralNetwork
 
     }
 
-    private DoubleMatrix matrixMutate(DoubleMatrix matrix)
-    {
-        return matrix.add(DoubleMatrix.rand(matrix.rows, matrix.columns)
-                                      .mul(2)
-                                      .sub(1));
-    }
-
-    //mutate weights by chance between 0 - 1
+    //mutate each weights by chance between 0 - 1
     public NeuralNetwork mutateWeights(double chance)
     {
         NeuralNetwork neuralNetwork = clone();
-        if (Math.random() > chance)
-        {
-            return neuralNetwork;
-        }
         for (int i = 0; i < neuralNetwork.weights.length; i++)
         {
-            neuralNetwork.weights[i] = matrixMutate(neuralNetwork.weights[i]);
+            double[][] weight = neuralNetwork.weights[i].toArray2();
+
+            for (int j = 0; j < weight.length; j++)
+            {
+                for (int k = 0; k < weight[j].length; k++)
+                {
+                    if (Math.random() <= chance)
+                    {
+                        weight[j][k] = chance;
+                    }
+                }
+            }
+            weights[i] = new DoubleMatrix(weight);
+
         }
         return neuralNetwork;
     }
@@ -266,13 +268,22 @@ public class NeuralNetwork
     public NeuralNetwork mutateBiases(double chance)
     {
         NeuralNetwork neuralNetwork = clone();
-        if (Math.random() > chance)
-        {
-            return neuralNetwork;
-        }
         for (int i = 0; i < neuralNetwork.biases.length; i++)
         {
-            neuralNetwork.biases[i] = matrixMutate(neuralNetwork.biases[i]);
+            double[][] bias = neuralNetwork.biases[i].toArray2();
+
+            for (int j = 0; j < bias.length; j++)
+            {
+                for (int k = 0; k < bias[j].length; k++)
+                {
+                    if (Math.random() <= chance)
+                    {
+                        bias[j][k] = chance;
+                    }
+                }
+            }
+            biases[i] = new DoubleMatrix(bias);
+
         }
         return neuralNetwork;
     }
@@ -281,17 +292,40 @@ public class NeuralNetwork
     public NeuralNetwork mutate(double chance)
     {
         NeuralNetwork neuralNetwork = clone();
-        if (Math.random() > chance)
-        {
-            return neuralNetwork;
-        }
         for (int i = 0; i < neuralNetwork.weights.length; i++)
         {
-            neuralNetwork.weights[i] = matrixMutate(neuralNetwork.weights[i]);
+            double[][] weight = neuralNetwork.weights[i].toArray2();
+
+            for (int j = 0; j < weight.length; j++)
+            {
+                for (int k = 0; k < weight[j].length; k++)
+                {
+                    if (Math.random() <= chance)
+                    {
+                        weight[j][k] = chance;
+                    }
+                }
+            }
+            weights[i] = new DoubleMatrix(weight);
+
         }
+
         for (int i = 0; i < neuralNetwork.biases.length; i++)
         {
-            neuralNetwork.biases[i] = matrixMutate(neuralNetwork.biases[i]);
+            double[][] bias = neuralNetwork.biases[i].toArray2();
+
+            for (int j = 0; j < bias.length; j++)
+            {
+                for (int k = 0; k < bias[j].length; k++)
+                {
+                    if (Math.random() <= chance)
+                    {
+                        bias[j][k] = chance;
+                    }
+                }
+            }
+            biases[i] = new DoubleMatrix(bias);
+
         }
         return neuralNetwork;
     }
