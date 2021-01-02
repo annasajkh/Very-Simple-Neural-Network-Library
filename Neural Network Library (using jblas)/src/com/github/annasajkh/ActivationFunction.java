@@ -5,7 +5,7 @@ public enum ActivationFunction
     //use sigmoid if you want standard thing is not fast or slow and it's accurate
     SIGMOID,
     /*
-    use tanh if you want more accurate but be careful if you change the learning rate to high or
+    use tanh if you want more accurate but be careful if you change the learning rate too high or
     make training too long it may overshot
     */
     TANH,
