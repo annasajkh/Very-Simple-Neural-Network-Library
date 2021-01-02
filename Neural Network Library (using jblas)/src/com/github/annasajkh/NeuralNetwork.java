@@ -120,9 +120,7 @@ public class NeuralNetwork
             {
                 //weight from hidden to hidden
                 weight = DoubleMatrix.rand(hiddenLayerSize, hiddenLayerSize)
-                                     .mul(2)
-                                     .sub(1)
-                                     .mul(1.41421356237);
+                                     .sub(0.5);
             }
             else
             {
@@ -131,18 +129,14 @@ public class NeuralNetwork
                 {
                     //weight from hidden to output
                     weight = DoubleMatrix.rand(outputSize, hiddenLayerSize)
-                                         .mul(2)
-                                         .sub(1)
-                                         .mul(1.41421356237);
+                                         .sub(0.5);
                 }
                 //make this is it's a input layer
                 else
                 {
                     //weight from input to hidden
                     weight = DoubleMatrix.rand(hiddenLayerSize, inputSize)
-                                         .mul(2)
-                                         .sub(1)
-                                         .mul(1.41421356237);
+                                         .sub(0.5);
                 }
             }
 
@@ -153,16 +147,12 @@ public class NeuralNetwork
             if (i != network.length - 1)
             {
                 bias = DoubleMatrix.rand(hiddenLayerSize, 1)
-                                   .mul(2)
-                                   .sub(1)
-                                   .mul(1.41421356237);
+                                   .sub(0.5);
             }
             else
             {
                 bias = DoubleMatrix.rand(outputSize, 1)
-                                   .mul(2)
-                                   .sub(1)
-                                   .mul(1.41421356237);
+                                   .sub(0.5);
             }
 
             biases[i - 1] = bias;
