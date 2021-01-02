@@ -15,20 +15,58 @@ public class NeuralNetwork
     private int layerCount;
     private int outputSize;
     private double[] expectedOutput;
-    private double learningRate = 0.01;
+    private static double learningRate = 0.01;
+    ActivationFunction activationFunction = ActivationFunction.SIGMOID;
 
-    private static DoubleMatrix sigmoid(DoubleMatrix x)
+    private static DoubleMatrix leakyRelu(DoubleMatrix matrix)
     {
-        return MatrixFunctions.exp(x.neg())
+        for (int i = 0; i < matrix.rows; i++)
+        {
+            for (int j = 0; j < matrix.columns; j++)
+            {
+                double value = matrix.get(i, j);
+                matrix.put(i, j, value >= 0 ? value : value * 0.01);
+            }
+        }
+        return matrix;
+    }
+
+    private static DoubleMatrix outputFunction(DoubleMatrix matrix)
+    {
+        if (matrix.length > 1)
+        {
+            return sigmoid(matrix);
+        }
+        else
+        {
+            return matrix;
+        }
+    }
+
+    private static DoubleMatrix sigmoid(DoubleMatrix matrix)
+    {
+        return MatrixFunctions.exp(matrix.neg())
                               .add(1)
                               .rdiv(1);
     }
 
-    private static DoubleMatrix dsigmoid(DoubleMatrix y)
+    private static DoubleMatrix dSigmoid(DoubleMatrix matrix)
     {
-        //assuming y is has already been sigmoid
-        return y.mul(y.rsub(1));
+        //assuming it has been already sigmoid
+        return matrix.mul(matrix.rsub(1));
     }
+
+    private static DoubleMatrix tanh(DoubleMatrix matrix)
+    {
+        return MatrixFunctions.tanh(matrix);
+    }
+
+    private static DoubleMatrix dTanh(DoubleMatrix matrix)
+    {
+        return MatrixFunctions.pow(matrix, 2)
+                              .rsub(1);
+    }
+
 
     public NeuralNetwork(int inputSize, int hiddenLayerSize, int outputSize)
     {
@@ -83,7 +121,8 @@ public class NeuralNetwork
                 //weight from hidden to hidden
                 weight = DoubleMatrix.rand(hiddenLayerSize, hiddenLayerSize)
                                      .mul(2)
-                                     .sub(1);
+                                     .sub(1)
+                                     .mul(1.41421356237);
             }
             else
             {
@@ -93,7 +132,8 @@ public class NeuralNetwork
                     //weight from hidden to output
                     weight = DoubleMatrix.rand(outputSize, hiddenLayerSize)
                                          .mul(2)
-                                         .sub(1);
+                                         .sub(1)
+                                         .mul(1.41421356237);
                 }
                 //make this is it's a input layer
                 else
@@ -101,7 +141,8 @@ public class NeuralNetwork
                     //weight from input to hidden
                     weight = DoubleMatrix.rand(hiddenLayerSize, inputSize)
                                          .mul(2)
-                                         .sub(1);
+                                         .sub(1)
+                                         .mul(1.41421356237);
                 }
             }
 
@@ -113,13 +154,15 @@ public class NeuralNetwork
             {
                 bias = DoubleMatrix.rand(hiddenLayerSize, 1)
                                    .mul(2)
-                                   .sub(1);
+                                   .sub(1)
+                                   .mul(1.41421356237);
             }
             else
             {
                 bias = DoubleMatrix.rand(outputSize, 1)
                                    .mul(2)
-                                   .sub(1);
+                                   .sub(1)
+                                   .mul(1.41421356237);
             }
 
             biases[i - 1] = bias;
@@ -131,12 +174,38 @@ public class NeuralNetwork
         this.learningRate = learningRate;
     }
 
+    public void setActivationFunction(ActivationFunction activationFunction)
+    {
+        this.activationFunction = activationFunction;
+    }
+
     private void preprocess(int i, boolean train)
     {
 
         //matrix multiplacation between weight and before layer and also adding the biases and pass it to sigmoid function
-        network[i] = sigmoid(weights[i - 1].mmul(network[i - 1])
-                                           .add(biases[i - 1]));
+        switch (activationFunction)
+        {
+            case LEAKY_RELU:
+                if (i == network.length - 1)
+                {
+                    network[i] = outputFunction(leakyRelu(weights[i - 1].mmul(network[i - 1])
+                                                                        .add(biases[i - 1])));
+                }
+                else
+                {
+                    network[i] = leakyRelu(weights[i - 1].mmul(network[i - 1])
+                                                         .add(biases[i - 1]));
+                }
+                break;
+            case SIGMOID:
+                network[i] = sigmoid(weights[i - 1].mmul(network[i - 1])
+                                                   .add(biases[i - 1]));
+                break;
+            case TANH:
+                network[i] = tanh(weights[i - 1].mmul(network[i - 1])
+                                                .add(biases[i - 1]));
+        }
+
 
         //if the current layer is the output and it's training then do the backpropagation
         if (i == network.length - 1 && train)
@@ -180,9 +249,23 @@ public class NeuralNetwork
     private void changingWeightsAndBiases(int index, DoubleMatrix errors, DoubleMatrix layer, DoubleMatrix afterLayer)
     {
 
-        //calculate gradient (layer * (1 - layer)) and multiply it by errors and learning rate
-        DoubleMatrix gradient = dsigmoid(layer).mul(errors)
-                                               .mul(learningRate);
+        //calculate gradient and pass it through activation function and multiply it by errors and learning rate
+        DoubleMatrix gradient = null;
+        switch (activationFunction)
+        {
+            case LEAKY_RELU:
+                gradient = leakyRelu(layer).mul(errors)
+                                           .mul(learningRate);
+                break;
+            case SIGMOID:
+                gradient = dSigmoid(layer).mul(errors)
+                                          .mul(learningRate);
+                break;
+            case TANH:
+                gradient = dTanh(layer).mul(errors)
+                                       .mul(learningRate);
+        }
+
 
         //deltaWeight = gradient multiply afterLayer transposted
         DoubleMatrix deltaWeight = gradient.mmul(afterLayer.transpose());
