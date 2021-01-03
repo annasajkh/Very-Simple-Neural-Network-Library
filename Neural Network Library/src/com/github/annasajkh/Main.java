@@ -13,7 +13,7 @@ public class Main
         NeuralNetwork neuralNetwork = new NeuralNetwork(2, 5, 1, 2);
         neuralNetwork.setLearningRate(0.1);
         Random random = new Random();
-        for (int i = 0; i < 50000; i++)
+        for (int i = 0; i < 100_000; i++)
         {
             double[] inputs = {random.nextInt(2), random.nextInt(2)};
             double[] outputs = {(int) inputs[0] ^ (int) inputs[1]};

@@ -1,6 +1,7 @@
 package com.github.annasajkh;
 
 import java.util.Arrays;
+import java.util.function.DoubleUnaryOperator;
 
 
 public class Matrix
@@ -20,6 +21,17 @@ public class Matrix
             for (int j = 0; j < cols; j++)
             {
                 array[i][j] = 0;
+            }
+        }
+    }
+
+    public void map(DoubleUnaryOperator mapper)
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                array[i][j] = mapper.applyAsDouble(array[i][j]);
             }
         }
     }
@@ -71,13 +83,13 @@ public class Matrix
         }
     }
 
-    public void mutate()
+    public void mutate(double chance)
     {
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < cols; j++)
             {
-                array[i][j] += Math.random() * 2 - 1;
+                array[i][j] += Math.random() <= chance ? Math.random() * 2 - 1: array[i][j];
             }
         }
     }
@@ -166,6 +178,19 @@ public class Matrix
                 array[i][j] += scalar;
             }
         }
+    }
+
+    public Matrix clone()
+    {
+        Matrix matrix = new Matrix(this.rows,this.cols);
+        for (int i = 0; i < matrix.rows; i++)
+        {
+            for (int j = 0; j < matrix.cols; j++)
+            {
+                matrix.array[i][j] = array[i][j];
+            }
+        }
+        return matrix;
     }
 
 

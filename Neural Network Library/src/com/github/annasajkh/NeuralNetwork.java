@@ -1,10 +1,8 @@
 package com.github.annasajkh;
 
-import java.util.Arrays;
-
 public class NeuralNetwork
 {
-    private double[][] network;
+    private Matrix[] network;
     private Matrix[] weights;
     private Matrix[] biases;
     private int inputSize;
@@ -53,13 +51,13 @@ public class NeuralNetwork
         this.outputSize = outputSize;
 
         //make layers of hidden layer as many as the layer count
-        double[] hiddenLayers = new double[hiddenLayerSize];
+        Matrix hiddenLayers = new Matrix(1,hiddenLayerSize);
 
         //make the network with size of input + layerCount + output
-        network = new double[layerCount + 2][];
+        network = new Matrix[layerCount + 2];
 
         //make network index 0 the size of input cuz it's a input layer
-        network[0] = new double[inputSize];
+        network[0] = new Matrix(1,inputSize);
 
         //fill network index 1 - ? with the hidden layer
         for (int i = 1; i < network.length - 1; i++)
@@ -68,7 +66,7 @@ public class NeuralNetwork
         }
 
         //make network index last the size of output cuz it's a output layer
-        network[network.length - 1] = new double[outputSize];
+        network[network.length - 1] = new Matrix(1,outputSize);
 
         for (int i = 1; i < network.length; i++)
         {
@@ -131,32 +129,28 @@ public class NeuralNetwork
     {
 
         //matrix multiplacation between weight and before layer
-        Matrix results = Matrix.multiply(weights[i - 1], new Matrix(network[i - 1]));
+        Matrix results = Matrix.multiply(weights[i - 1], network[i - 1]);
 
         //add biasses
         results.add(biases[i - 1]);
 
-        //convert it to array
-        double[] resultsArray = results.toArray();
+        //map it to sigmoid function
+        results.map(NeuralNetwork::sigmoid);
 
-        //pass each of the result to the activation function and set it back as a result
-        resultsArray = Arrays.stream(resultsArray)
-                             .map(NeuralNetwork::sigmoid)
-                             .toArray();
         //set current layer to the result
-        network[i] = resultsArray;
+        network[i] = results;
 
         //if the current layer is the output and it's training then do the backpropagation
         if (i == network.length - 1 && train)
         {
-            backpropagation(resultsArray);
+            backpropagation(results);
         }
     }
 
     public double[] process(double[] input)
     {
         //pass input to input layer
-        network[0] = input;
+        network[0] = new Matrix(input);
 
         //feed forward the input from layer 1 so it can get layer 0
         for (int i = 1; i < network.length; i++)
@@ -165,7 +159,7 @@ public class NeuralNetwork
         }
 
         //return the last layer aka the output
-        return network[network.length - 1];
+        return network[network.length - 1].toArray();
     }
 
     private Matrix[] getAllErrors(Matrix error)
@@ -184,20 +178,19 @@ public class NeuralNetwork
     }
 
 
-    private void changingWeightsAndBiases(int index, Matrix errors, double[] layer, double[] afterLayer)
+    private void changingWeightsAndBiases(int index, Matrix errors, Matrix layer, Matrix afterLayer)
     {
 
         //calculate gradient (layer * (1 - layer)) by mapping with stream
-        Matrix gradient = new Matrix(Arrays.stream(layer)
-                                           .map(NeuralNetwork::dsigmoid)
-                                           .toArray());
+        Matrix gradient = layer.clone();
+        layer.map(NeuralNetwork::dsigmoid);
 
         //multiply it by errors and learning rate
         gradient.scale(errors);
         gradient.scale(learningRate);
 
         //deltaWeight = gradient multiply afterLayer transposted
-        Matrix deltaWeight = Matrix.multiply(gradient, Matrix.transpose(new Matrix(afterLayer)));
+        Matrix deltaWeight = Matrix.multiply(gradient, Matrix.transpose(afterLayer));
 
         //adjust the weight by deltaWeight
         weights[index].add(deltaWeight);
@@ -207,12 +200,12 @@ public class NeuralNetwork
 
     }
 
-    private void backpropagation(double[] output)
+    private void backpropagation(Matrix output)
     {
 
         //calculate output error
         Matrix error = new Matrix(expectedOutput);
-        error.sub(new Matrix(output));
+        error.sub(output);
 
         //get all errors
         Matrix[] errors = getAllErrors(error);
@@ -243,7 +236,7 @@ public class NeuralNetwork
         this.expectedOutput = expectedOutput;
 
         //pass input to input layer
-        network[0] = input;
+        network[0] = new Matrix(input);
 
         //feedforward
         for (int i = 1; i < network.length; i++)
@@ -257,13 +250,9 @@ public class NeuralNetwork
     public NeuralNetwork mutateWeights(double chance)
     {
         NeuralNetwork neuralNetwork = clone();
-        if (Math.random() > chance)
-        {
-            return neuralNetwork;
-        }
         for (int i = 0; i < neuralNetwork.weights.length; i++)
         {
-            neuralNetwork.weights[i].mutate();
+            neuralNetwork.weights[i].mutate(chance);
         }
         return neuralNetwork;
     }
@@ -272,13 +261,9 @@ public class NeuralNetwork
     public NeuralNetwork mutateBiases(double chance)
     {
         NeuralNetwork neuralNetwork = clone();
-        if (Math.random() > chance)
-        {
-            return neuralNetwork;
-        }
         for (int i = 0; i < neuralNetwork.biases.length; i++)
         {
-            neuralNetwork.biases[i].mutate();
+            neuralNetwork.biases[i].mutate(chance);
         }
         return neuralNetwork;
     }
@@ -287,17 +272,13 @@ public class NeuralNetwork
     public NeuralNetwork mutate(double chance)
     {
         NeuralNetwork neuralNetwork = clone();
-        if (Math.random() > chance)
-        {
-            return neuralNetwork;
-        }
         for (int i = 0; i < neuralNetwork.weights.length; i++)
         {
-            neuralNetwork.weights[i].mutate();
+            neuralNetwork.weights[i].mutate(chance);
         }
         for (int i = 0; i < neuralNetwork.biases.length; i++)
         {
-            neuralNetwork.biases[i].mutate();
+            neuralNetwork.biases[i].mutate(chance);
         }
         return neuralNetwork;
     }
