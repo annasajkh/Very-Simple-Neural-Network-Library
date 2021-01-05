@@ -2,7 +2,7 @@ package com.github.annasajkh;
 
 public class NeuralNetwork
 {
-    private Matrix[] network;
+    public Matrix[] network;
     private Matrix[] weights;
     private Matrix[] biases;
     private int inputSize;
@@ -12,15 +12,32 @@ public class NeuralNetwork
     private double[] expectedOutput;
     private double learningRate = 0.01;
 
-    private static double sigmoid(double x)
+    private static Matrix sigmoid(Matrix matrix)
     {
-        return 1.0 / (1.0 + Math.exp(-x));
+        Matrix m = matrix.clone();
+        for (int i = 0; i < m.rows; i++)
+        {
+            for (int j = 0; j < m.cols; j++)
+            {
+                m.array[i][j] =  1.0 / (1.0 + Math.exp(-m.array[i][j]));
+            }
+        }
+        return m;
     }
 
-    private static double dsigmoid(double y)
+    private static Matrix dsigmoid(Matrix matrix)
     {
-        //assuming y is has already been sigmoid
-        return y * (1 - y);
+        Matrix m = matrix.clone();
+
+        for (int i = 0; i <  m.rows; i++)
+        {
+            for (int j = 0; j < m.cols; j++)
+            {
+                double value = m.array[i][j];
+                m.array[i][j] =  value * (1 - value);
+            }
+        }
+        return m;
     }
 
     public NeuralNetwork(int inputSize, int hiddenLayerSize, int outputSize)
@@ -28,17 +45,6 @@ public class NeuralNetwork
         this(inputSize, hiddenLayerSize, outputSize, 1);
     }
 
-    public NeuralNetwork(NeuralNetwork neuralNetwork)
-    {
-        network = neuralNetwork.network;
-        weights = neuralNetwork.weights;
-        biases = neuralNetwork.biases;
-        inputSize = neuralNetwork.inputSize;
-        hiddenLayerSize = neuralNetwork.hiddenLayerSize;
-        layerCount = neuralNetwork.layerCount;
-        outputSize = neuralNetwork.outputSize;
-        learningRate = neuralNetwork.learningRate;
-    }
 
     public NeuralNetwork(int inputSize, int hiddenLayerSize, int outputSize, int layerCount)
     {
@@ -135,7 +141,7 @@ public class NeuralNetwork
         results.add(biases[i - 1]);
 
         //map it to sigmoid function
-        results = results.map(NeuralNetwork::sigmoid);
+        results = sigmoid(results);
 
         //set current layer to the result
         network[i] = results;
@@ -182,7 +188,7 @@ public class NeuralNetwork
     {
 
         //calculate gradient and map it to dsigmoid function
-        Matrix gradient = layer.map(NeuralNetwork::dsigmoid);
+        Matrix gradient = dsigmoid(layer);
 
         //multiply it by errors and learning rate
         gradient.scale(errors);
@@ -284,7 +290,19 @@ public class NeuralNetwork
 
     public NeuralNetwork clone()
     {
-        return new NeuralNetwork(this);
+        NeuralNetwork clone = new NeuralNetwork(inputSize,hiddenLayerSize,outputSize,layerCount);
+
+        for (int i = 0; i < weights.length; i++)
+        {
+            clone.weights[i] = weights[i].clone();
+        }
+        for (int i = 0; i < biases.length; i++)
+        {
+            clone.biases[i] = biases[i].clone();
+        }
+
+        clone.learningRate = learningRate;
+        return clone;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.github.annasajkh;
 
 import java.util.Arrays;
-import java.util.function.DoubleUnaryOperator;
 
 
 public class Matrix
@@ -23,18 +22,6 @@ public class Matrix
                 array[i][j] = 0;
             }
         }
-    }
-    public Matrix map(DoubleUnaryOperator mapper)
-    {
-        Matrix matrix = clone();
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                matrix.array[i][j] = mapper.applyAsDouble(matrix.array[i][j]);
-            }
-        }
-        return matrix;
     }
 
     public Matrix(double[] arr)
@@ -90,7 +77,7 @@ public class Matrix
         {
             for (int j = 0; j < cols; j++)
             {
-                array[i][j] += Math.random() <= chance ? Math.random() * 2 - 1: array[i][j];
+                array[i][j] += Math.random() <= chance ? Math.random() * 2 - 1: 0;
             }
         }
     }
