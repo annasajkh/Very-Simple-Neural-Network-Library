@@ -2,7 +2,7 @@ package com.github.annasajkh;
 
 public class NeuralNetwork
 {
-    public Matrix[] network;
+    private Matrix[] network;
     private Matrix[] weights;
     private Matrix[] biases;
     private int inputSize;
