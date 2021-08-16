@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+
 public class NeuralNetwork
 {
     private Matrix[] network;
@@ -16,51 +17,9 @@ public class NeuralNetwork
     private float[] expectedOutput;
     private float learningRate = 0.01f;
     private int hiddenLayerCount;
+    private ActivationFunction hiddenActivation = ActivationFunctions.leakyRelu;
+    private ActivationFunction outputActivation = ActivationFunctions.sigmoid;
 
-    private static void sigmoid(Matrix matrix)
-    {
-        for(int i = 0; i < matrix.rows; i++)
-        {
-            for(int j = 0; j < matrix.cols; j++)
-            {
-                matrix.array[i][j] = 1.0f / (1.0f + (float) (Math.exp(-matrix.array[i][j])));
-            }
-        }
-    }
-
-    private static void dsigmoid(Matrix matrix)
-    {
-        for(int i = 0; i < matrix.rows; i++)
-        {
-            for(int j = 0; j < matrix.cols; j++)
-            {
-                float value = matrix.array[i][j];
-                matrix.array[i][j] = value * (1 - value);
-            }
-        }
-    }
-
-    private static void leakyRelu(Matrix matrix)
-    {
-        for(int i = 0; i < matrix.rows; i++)
-        {
-            for(int j = 0; j < matrix.cols; j++)
-            {
-                matrix.array[i][j] = matrix.array[i][j] >= 0 ? matrix.array[i][j] : 0.01f * matrix.array[i][j];
-            }
-        }
-    }
-
-    private static void dleakyRelu(Matrix matrix)
-    {
-        for(int i = 0; i < matrix.rows; i++)
-        {
-            for(int j = 0; j < matrix.cols; j++)
-            {
-                matrix.array[i][j] = matrix.array[i][j] >= 0 ? 1 : 0.01f;
-            }
-        }
-    }
 
     public NeuralNetwork(int inputSize, int hiddenLayerSize, int outputSize)
     {
@@ -143,6 +102,12 @@ public class NeuralNetwork
         }
 
     }
+    
+    public void setActivationFunctions(ActivationFunction hiddenActivation, ActivationFunction outputActivation)
+    {
+        this.hiddenActivation = hiddenActivation;
+        this.outputActivation = outputActivation;
+    }
 
     public void setLearningRate(float learningRate)
     {
@@ -160,11 +125,11 @@ public class NeuralNetwork
 
         if(i == network.length - 1)
         {
-            sigmoid(results);
+            ActivationFunctions.applyActivationFunction(results, outputActivation, false);
         }
         else
         {
-            leakyRelu(results);
+            ActivationFunctions.applyActivationFunction(results, hiddenActivation, false);
         }
 
         // set current layer to the result
@@ -215,11 +180,11 @@ public class NeuralNetwork
 
         if(index == network.length - 2)
         {
-            dsigmoid(layerTemp);
+            ActivationFunctions.applyActivationFunction(layerTemp, outputActivation, true);
         }
         else
         {
-            dleakyRelu(layerTemp);
+            ActivationFunctions.applyActivationFunction(layerTemp, hiddenActivation, true);
         }
 
         // multiply it by errors and learning rate

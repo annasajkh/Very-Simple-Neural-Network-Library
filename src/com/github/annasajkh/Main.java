@@ -8,6 +8,7 @@ public class Main
     public static void main(String[] args)
     {
         NeuralNetwork neuralNetwork = new NeuralNetwork(2, 15, 1, 1);
+        neuralNetwork.setActivationFunctions(ActivationFunctions.leakyRelu,ActivationFunctions.sigmoid);
         neuralNetwork.setLearningRate(0.1f);
         Random random = new Random();
 
@@ -21,6 +22,7 @@ public class Main
         neuralNetwork.save("model.txt");
 
         NeuralNetwork neuralNetworkFromSave = NeuralNetwork.load("model.txt");
+        neuralNetworkFromSave.setActivationFunctions(ActivationFunctions.leakyRelu,ActivationFunctions.sigmoid);
 
         System.out.println("real answer is " + (1 ^ 1));
         System.out.println("AI prediction is " + neuralNetworkFromSave.process(new float[]{1, 1})[0]);

@@ -27,16 +27,18 @@ public class Matrix
 
     }
 
-    public void fill(float[] arr)
+    public Matrix fill(float[] arr)
     {
 
         for(int i = 0; i < this.rows; i++)
         {
             array[i][0] = arr[i];
         }
+        
+        return this;
     }
 
-    public void randomize()
+    public Matrix randomize()
     {
 
         for(int i = 0; i < rows; i++)
@@ -46,9 +48,11 @@ public class Matrix
                 array[i][j] = (float)(Math.random() * 4 - 2);
             }
         }
+        
+        return this;
     }
     
-    public void set(float number)
+    public Matrix set(float number)
     {
 
         for(int i = 0; i < rows; i++)
@@ -58,9 +62,11 @@ public class Matrix
                 array[i][j] = number;
             }
         }
+        
+        return this;
     }
 
-    public void scale(float scalar)
+    public Matrix scale(float scalar)
     {
         for(int i = 0; i < rows; i++)
         {
@@ -69,9 +75,11 @@ public class Matrix
                 array[i][j] *= scalar;
             }
         }
+        
+        return this;
     }
 
-    public void scale(Matrix matrix)
+    public Matrix scale(Matrix matrix)
     {
         for(int i = 0; i < matrix.rows; i++)
         {
@@ -80,9 +88,11 @@ public class Matrix
                 array[i][j] *= matrix.array[i][j];
             }
         }
+        
+        return this;
     }
 
-    public void mutate(float chance)
+    public Matrix mutate(float chance)
     {
         for(int i = 0; i < rows; i++)
         {
@@ -91,6 +101,8 @@ public class Matrix
                 array[i][j] = Math.random() <= chance ? (float)(Math.random() * 4 - 2) : array[i][j];
             }
         }
+        
+        return this;
     }
 
     public float[] toArray()
@@ -146,7 +158,7 @@ public class Matrix
         return result;
     }
 
-    public void add(Matrix matrix)
+    public Matrix add(Matrix matrix)
     {
         for(int i = 0; i < matrix.rows; i++)
         {
@@ -155,9 +167,11 @@ public class Matrix
                 array[i][j] += matrix.array[i][j];
             }
         }
+        
+        return this;
     }
 
-    public void sub(Matrix matrix)
+    public Matrix sub(Matrix matrix)
     {
         for(int i = 0; i < matrix.rows; i++)
         {
@@ -166,9 +180,39 @@ public class Matrix
                 array[i][j] -= matrix.array[i][j];
             }
         }
+        
+        return this;
+    }
+    
+    public Matrix sub(float scalar)
+    {
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < cols; j++)
+            {
+                array[i][j] -= scalar;
+            }
+        }
+        
+        return this;
+    }
+    
+    public float sum()
+    {
+        float sum = 0;
+        
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < cols; j++)
+            {
+                sum += array[i][j];
+            }
+        }
+        
+        return sum;
     }
 
-    public void add(float scalar)
+    public Matrix add(float scalar)
     {
         for(int i = 0; i < rows; i++)
         {
@@ -177,12 +221,41 @@ public class Matrix
                 array[i][j] += scalar;
             }
         }
+        
+        return this;
+    }
+    
+    public Matrix div(Matrix matrix)
+    {
+        for(int i = 0; i < matrix.rows; i++)
+        {
+            for(int j = 0; j < matrix.cols; j++)
+            {
+                array[i][j] /= matrix.array[i][j];
+            }
+        }
+        
+        return this;
+    }
+    
+    public Matrix div(float scalar)
+    {
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < cols; j++)
+            {
+                array[i][j] /= scalar;
+            }
+        }
+        
+        return this;
     }
 
     @Override
     public Matrix clone()
     {
         Matrix matrix = new Matrix(this.rows, this.cols);
+        
         for(int i = 0; i < matrix.rows; i++)
         {
             for(int j = 0; j < matrix.cols; j++)
@@ -190,6 +263,7 @@ public class Matrix
                 matrix.array[i][j] = array[i][j];
             }
         }
+        
         return matrix;
     }
 
