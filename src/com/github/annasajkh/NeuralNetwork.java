@@ -143,8 +143,15 @@ public class NeuralNetwork
         }
     }
 
-    public float[] process(float[] input)
+    public float[] process(float[] input) throws Exception
     {
+
+        // checking if input length is greater than input size
+        if(input.length > inputSize)
+        {
+            throw new Exception("Error input is bigger than the input size");
+        }
+        
         // pass input to input layer
         network[0].fill(input);
 
@@ -219,20 +226,18 @@ public class NeuralNetwork
         }
     }
 
-    public void train(float[] input, float[] expectedOutput)
+    public void train(float[] input, float[] expectedOutput) throws Exception
     {
         // checking if expected output length is greater than output size
         if(expectedOutput.length > outputSize)
         {
-            System.out.println("Error expected output is bigger than the output size");
-            return;
+            throw new Exception("Error expected output is bigger than the output size");
         }
 
         // checking if input length is greater than input size
-        if(expectedOutput.length > inputSize)
+        if(input.length > inputSize)
         {
-            System.out.println("Error input is bigger than the input size");
-            return;
+            throw new Exception("Error input is bigger than the input size");
         }
 
         this.expectedOutput = expectedOutput;
@@ -320,7 +325,7 @@ public class NeuralNetwork
             if(i != biases.length - 1)
                 string.append('\n');
         }
-
+        
         try
         {
             FileWriter writer = new FileWriter(filename);

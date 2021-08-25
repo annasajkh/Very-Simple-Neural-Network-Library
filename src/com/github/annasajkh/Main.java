@@ -5,11 +5,11 @@ import java.util.Random;
 public class Main
 {
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
-        NeuralNetwork neuralNetwork = new NeuralNetwork(2, 15, 1, 1);
+        NeuralNetwork neuralNetwork = new NeuralNetwork(2, 20, 1, 1);
         neuralNetwork.setActivationFunctions(ActivationFunctions.leakyRelu,ActivationFunctions.sigmoid);
-        neuralNetwork.setLearningRate(0.1f);
+        neuralNetwork.setLearningRate(0.01f);
         Random random = new Random();
 
         for(int i = 0; i < 10_000; i++)
