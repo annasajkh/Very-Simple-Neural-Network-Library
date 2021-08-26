@@ -27,9 +27,13 @@ public class Matrix
 
     }
 
-    public Matrix fill(float[] arr)
+    public Matrix fill(float[] arr) throws Exception
     {
-
+        if(arr.length != rows)
+        {
+            throw new Exception("arr length has to be the same as row");
+        }
+        
         for(int i = 0; i < this.rows; i++)
         {
             array[i][0] = arr[i];
@@ -79,8 +83,13 @@ public class Matrix
         return this;
     }
 
-    public Matrix scale(Matrix matrix)
+    public Matrix scale(Matrix matrix) throws Exception
     {
+        if(matrix.cols != cols || matrix.rows != rows)
+        {
+            throw new Exception("Error matrices is not the same size");
+        }
+        
         for(int i = 0; i < matrix.rows; i++)
         {
             for(int j = 0; j < matrix.cols; j++)
@@ -134,12 +143,11 @@ public class Matrix
 
     }
 
-    public static Matrix multiply(Matrix a, Matrix b)
+    public static Matrix multiply(Matrix a, Matrix b) throws Exception
     {
         if(a.cols != b.rows)
         {
-            System.out.println("columns has match to rows");
-            return null;
+            throw new Exception("columns has match to rows");
         }
 
         Matrix result = new Matrix(a.rows, b.cols);
@@ -158,8 +166,13 @@ public class Matrix
         return result;
     }
 
-    public Matrix add(Matrix matrix)
+    public Matrix add(Matrix matrix) throws Exception
     {
+        if(matrix.cols != cols || matrix.rows != rows)
+        {
+            throw new Exception("Error matrices is not the same size");
+        }
+        
         for(int i = 0; i < matrix.rows; i++)
         {
             for(int j = 0; j < matrix.cols; j++)
@@ -171,8 +184,13 @@ public class Matrix
         return this;
     }
 
-    public Matrix sub(Matrix matrix)
+    public Matrix sub(Matrix matrix) throws Exception
     {
+        if(matrix.cols != cols || matrix.rows != rows)
+        {
+            throw new Exception("Error matrices is not the same size");
+        }
+        
         for(int i = 0; i < matrix.rows; i++)
         {
             for(int j = 0; j < matrix.cols; j++)
@@ -225,8 +243,13 @@ public class Matrix
         return this;
     }
     
-    public Matrix div(Matrix matrix)
+    public Matrix div(Matrix matrix) throws Exception
     {
+        if(matrix.cols != cols || matrix.rows != rows)
+        {
+            throw new Exception("Error matrices is not the same size");
+        }
+        
         for(int i = 0; i < matrix.rows; i++)
         {
             for(int j = 0; j < matrix.cols; j++)

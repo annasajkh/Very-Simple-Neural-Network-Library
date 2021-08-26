@@ -114,7 +114,7 @@ public class NeuralNetwork
         this.learningRate = learningRate;
     }
 
-    private void preprocess(int i, boolean train)
+    private void preprocess(int i, boolean train) throws Exception
     {
 
         // matrix multiplacation between weight and before layer
@@ -145,7 +145,6 @@ public class NeuralNetwork
 
     public float[] process(float[] input) throws Exception
     {
-
         // checking if input length is greater than input size
         if(input.length > inputSize)
         {
@@ -165,7 +164,7 @@ public class NeuralNetwork
         return network[network.length - 1].toArray();
     }
 
-    private Matrix[] getAllErrors(Matrix error)
+    private Matrix[] getAllErrors(Matrix error) throws Exception
     {
         // make array of matrix and set last index = error
         Matrix[] errors = new Matrix[weights.length];
@@ -180,7 +179,7 @@ public class NeuralNetwork
         return errors;
     }
 
-    private void changingWeightsAndBiases(int index, Matrix errors, Matrix layer, Matrix afterLayer)
+    private void changingWeightsAndBiases(int index, Matrix errors, Matrix layer, Matrix afterLayer) throws Exception
     {
 
         Matrix layerTemp = layer.clone();
@@ -209,7 +208,7 @@ public class NeuralNetwork
 
     }
 
-    private void backpropagation(Matrix output)
+    private void backpropagation(Matrix output) throws Exception
     {
 
         // calculate output error
